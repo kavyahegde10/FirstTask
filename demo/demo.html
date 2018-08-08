@@ -1,0 +1,202 @@
+<!DOCTYPE html>  
+  
+<html xmlns="http://www.w3.org/1999/xhtml">  
+<head runat="server">  
+    <title></title>  
+    <!--[if lte IE 8]>  
+         document.write("NOT HTML5 Compatible!!");  
+    <![endif]-->  
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script type="text/javascript" src="Scripts/Angular.min.js"></script>  
+    <script type="text/javascript">  
+        var isHtml5Compatible = document.createElement('canvas').getContext != undefined;  
+  
+        if (isHtml5Compatible) {  
+            initiateLocalStorage();  
+  
+        }  
+  
+        function initiateLocalStorage() {  
+              
+            var app = angular.module('student', ['storageService']);  
+              app.controller('studentController', ['$scope', 'getLocalStorage', function ($scope, getLocalStorage) {  
+                $scope.appTitle = "LocalStorage Demo";  
+                $scope.appHeadline = "AngularJS and HTML5";  
+  
+                
+                $scope.student = getLocalStorage.getstudent();  
+  
+                
+                $scope.count = $scope.student.length;    
+                $scope.addstudent = function () {  
+                    $scope.student.push({ 'no': $scope.no, 'name': $scope.Name, 'email': $scope.email,'age': $scope.age,'address': $scope.address });  
+                    getLocalStorage.updateStudent($scope.student);  
+                    $scope.no = '';  
+                    $scope.Name = '';  
+                    $scope.email = '';  
+					$scope.age = '';
+					 $scope.address ='';
+                    $scope.count = $scope.student.length;  
+                };  
+  
+                    $scope.deleteStudent=function(student){
+                    $scope.student.splice($scope.student.indexOf(student), 1);  
+                    getLocalStorage.updateStudent($scope.student);  
+                    $scope.count = $scope.student.length;  
+                };  
+            }]);  
+  
+            
+         
+            var storageService = angular.module('storageService', []);  
+            storageService.factory('getLocalStorage', function () {  
+                var studentList = {};  
+                return {  
+                    list: studentList,  
+                    updatestudent: function (studentArr) {  
+                        if (window.localStorage && studentArr) {  
+                              
+                            localStorage.setItem("student", angular.toJson(studentArr));  
+                        }  
+                        studentList = studentArr;  
+  
+                    },  
+                    getstudent: function () {  
+                        
+                        studentList = angular.fromJson(localStorage.getItem("student"));  
+                        return studentList ? studentList : [];						
+                    }  
+                };  
+  
+            });  
+        }  
+    </script>  
+  
+</head> 
+<style>
+    .button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+table {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+ td,  th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+ tr:nth-child(even){background-color: #f2f2f2;}
+
+ tr:hover {background-color: #ddd;}
+
+ th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+</style> 
+<body ng-app="student">  
+  
+    <div ng-controller="studentController">  
+  
+        <h1 class="app-title">student detail</h1>  
+   
+  <script>src="app.js"</script>
+        <form name="frm">  
+            <table>  
+                <tr>  
+                    <td> No   :  
+  
+                    </td>  
+                    <td>  
+                        <input type="number" name="no" ng-model="no" required><br />  
+                    </td>  
+                </tr>  
+                <tr>  
+                    <td> Name   :  
+  
+                    </td>  
+                    <td>  
+                        <input type="text" name="Name" ng-model="Name" required>  
+                    </td>  
+                </tr>  
+                <tr>  
+                    <td>Email   :  
+  
+                    </td>  
+                    <td>  
+                        <input type="text" name="email" ng-model="email">  
+                    </td>  
+                </tr>  
+				 <tr>  
+                    <td>Age   :  
+  
+                    </td>  
+                    <td>  
+                        <input type="number" name="age" ng-model="age">  
+                    </td>  
+                </tr>  
+				 <tr>  
+                    <td>Address   :  
+  
+                    </td>  
+                    <td>  
+                        <input type="text" name="address" ng-model="address">  
+                    </td>  
+                </tr>  
+                <tr>  
+                    <td colspan="2" align="right">  
+  
+                        <button ng-click="addstudent()" ng-disabled="frm.$invalid" class="button">Save</button>  
+                    </td>  
+  
+                </tr>  
+            </table>  
+        </form>  
+        <table cellpadding="4" cellspacing="4" border="1" style="border-collapse: collapse; border: solid 1px #000" class="table">  
+            <tr>  
+                <td><b> No</b></td>  
+                <td><b> Name</b></td>  
+                <td><b>Email</b></td>  
+				<td><b>age</b></td>  
+				<td><b>address</b></td>  
+                <td><b>Action</b></td>  
+            </tr>  
+            <tr ng-repeat="student in student">  
+                <td>{{ student.no }}  
+                </td>  
+                <td>{{ student.Name }}  
+                </td>  
+                <td>{{ student.email }}  
+                </td>  
+				<td>{{ student.age }}  
+                </td>
+				<td>{{ student.address }}  
+                </td>  				
+                <td>  
+                    <button ng-click="deleteStudent(student)">Delete</button>  
+  
+                </td>  
+            </tr>  
+  
+        </table>  
+        <div>Total student : {{count}}</div>  
+         </div>  
+  
+</body>  
+</html>  
+
+ 
+ 
